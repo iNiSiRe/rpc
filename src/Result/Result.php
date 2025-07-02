@@ -9,6 +9,7 @@ class Result implements ResultInterface, HttpResultInterface, MutableOutputInter
 {
     public function __construct(
         private mixed $output,
+        private array $headers = [],
     )
     {
     }
@@ -25,11 +26,20 @@ class Result implements ResultInterface, HttpResultInterface, MutableOutputInter
 
     public function getHttpHeaders(): array
     {
-        return [];
+        return $this->headers;
     }
 
-    public function setOutput(mixed $output)
+    public function setOutput(mixed $output): Result
     {
         $this->output = $output;
+
+        return $this;
+    }
+
+    public function setHeaders(array $headers): Result
+    {
+        $this->headers = $headers;
+
+        return $this;
     }
 }
