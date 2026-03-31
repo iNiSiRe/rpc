@@ -7,6 +7,7 @@ namespace inisire\RPC\DependencyInjection;
 use inisire\DataObject\Runtime\ObjectLoaderInterface;
 use inisire\DataObject\Serializer\DataSerializerInterface;
 use inisire\RPC\Entrypoint\EntrypointRootInterface;
+use inisire\RPC\Http\MiddlewareInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
@@ -28,5 +29,8 @@ class RPCExtension extends \Symfony\Component\DependencyInjection\Extension\Exte
         
         $container->registerForAutoconfiguration(DataSerializerInterface::class)
             ->addTag('rpc.data_serializer');
+
+        $container->registerForAutoconfiguration(MiddlewareInterface::class)
+            ->addTag('rpc.http_middleware');
     }
 }

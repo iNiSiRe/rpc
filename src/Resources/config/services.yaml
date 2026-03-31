@@ -35,3 +35,7 @@ services:
   inisire\RPC\Entrypoint\EntrypointRootRegistry:
     arguments:
       $container: !tagged_locator { tag: 'rpc.root' }
+
+  inisire\RPC\Http\HttpBridgeController:
+    arguments:
+      $middlewares: !tagged_iterator 'rpc.http_middleware'
