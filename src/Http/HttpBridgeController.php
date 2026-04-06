@@ -1,10 +1,10 @@
 <?php
 
-
 namespace inisire\RPC\Http;
 
-
+use Closure;
 use inisire\DataObject\DataObjectWizard;
+use inisire\RPC\Entrypoint\Entrypoint;
 use inisire\RPC\Entrypoint\Resolver;
 use inisire\RPC\Entrypoint\Runner;
 use inisire\RPC\Error\DebugServerError;
@@ -15,6 +15,7 @@ use inisire\RPC\Error\ValidationError;
 use inisire\RPC\Http\Context\RequestContext;
 use inisire\RPC\Result\MutableOutputInterface;
 use inisire\RPC\Result\ResultInterface;
+use IteratorAggregate;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -28,6 +29,11 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class HttpBridgeController extends AbstractController
 {
+    /**
+     * @var array<MiddlewareInterface>
+     */
+    private readonly array $middlewaresStack;
+
     public function __construct(
         private HttpBridge               $httpBridge,
         private DataObjectWizard         $wizard,
@@ -35,9 +41,10 @@ class HttpBridgeController extends AbstractController
         private ParameterBagInterface    $parameters,
         private EventDispatcherInterface $dispatcher,
         private HttpKernelInterface      $kernel,
-        private Runner                   $runner
-    )
-    {
+        private Runner                   $runner,
+                IteratorAggregate        $middlewares,
+    ) {
+        $this->middlewaresStack = array_reverse(iterator_to_array($middlewares));
     }
 
     #[Route(
@@ -71,8 +78,23 @@ class HttpBridgeController extends AbstractController
             }
         }
 
+        $context = new RequestContext($request, $this->getUser());
+
+        $pipeline = array_reduce(
+            $this->middlewaresStack,
+            static fn (
+                Closure $next,
+                MiddlewareInterface $middleware
+            ) => static fn (
+                Entrypoint $entrypoint,
+                mixed $parameter,
+                RequestContext $context
+            ): ResultInterface => $middleware->handle($entrypoint, $parameter, $context, $next),
+            $this->runner->run(...),
+        );
+
         try {
-            $result = $this->runner->run($entrypoint, $parameter, new RequestContext($request, $this->getUser()));
+            $result = $pipeline($entrypoint, $parameter, $context);
         } catch (\Exception|\Error $error) {
             $event = new ExceptionEvent($this->kernel, $request, HttpKernel::MAIN_REQUEST, $error);
             $this->dispatcher->dispatch($event, KernelEvents::EXCEPTION);
