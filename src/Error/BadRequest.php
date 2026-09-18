@@ -3,10 +3,10 @@
 namespace inisire\RPC\Error;
 
 use inisire\DataObject\Error\ErrorMessage;
-use inisire\RPC\Http\HttpResultInterface;
-use inisire\RPC\Result\ResultInterface;
+use inisire\RPC\Result\HttpResult;
+use Symfony\Component\HttpFoundation\Response;
 
-class BadRequest implements ErrorInterface, ResultInterface, HttpResultInterface
+class BadRequest extends HttpResult implements ErrorInterface
 {
     public function getCode(): string
     {
@@ -18,14 +18,9 @@ class BadRequest implements ErrorInterface, ResultInterface, HttpResultInterface
         return new ErrorMessage('Bad request');
     }
 
-    public function getHttpHeaders(): array
-    {
-        return [];
-    }
-
     public function getHttpCode(): int
     {
-        return 400;
+        return Response::HTTP_BAD_REQUEST;
     }
 
     public function getOutput(): mixed

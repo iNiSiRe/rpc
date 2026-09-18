@@ -4,11 +4,10 @@ namespace inisire\RPC\Error;
 
 
 use inisire\DataObject\Error\ErrorMessage;
-use inisire\RPC\Http\HttpResultInterface;
-use inisire\RPC\Result\ResultInterface;
+use inisire\RPC\Result\HttpResult;
+use Symfony\Component\HttpFoundation\Response;
 
-
-class Unauthorized implements ErrorInterface, ResultInterface, HttpResultInterface
+class Unauthorized extends HttpResult implements ErrorInterface
 {
     public function getCode(): string
     {
@@ -22,12 +21,7 @@ class Unauthorized implements ErrorInterface, ResultInterface, HttpResultInterfa
 
     public function getHttpCode(): int
     {
-        return 401;
-    }
-
-    public function getHttpHeaders(): array
-    {
-        return [];
+        return Response::HTTP_UNAUTHORIZED;
     }
 
     public function getOutput(): mixed

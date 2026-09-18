@@ -2,10 +2,9 @@
 
 namespace inisire\RPC\Result;
 
+use Symfony\Component\HttpFoundation\Response;
 
-use inisire\RPC\Http\HttpResultInterface;
-
-class EmptyResult extends Result implements HttpResultInterface
+class EmptyResult extends Result
 {
     public function __construct()
     {
@@ -14,11 +13,6 @@ class EmptyResult extends Result implements HttpResultInterface
 
     public function getHttpCode(): int
     {
-        return 204;
-    }
-
-    public function getHttpHeaders(): array
-    {
-        return [];
+        return Response::HTTP_NO_CONTENT;
     }
 }

@@ -4,21 +4,20 @@ namespace inisire\RPC\Result;
 
 use inisire\RPC\Http\Cache\CacheControl;
 use inisire\RPC\Http\Cache\Expires;
-use inisire\RPC\Http\HttpResultInterface;
+use Symfony\Component\HttpFoundation\Response;
 
-class CachedResult implements ResultInterface, HttpResultInterface, MutableOutputInterface
+class CachedResult extends HttpResult implements MutableOutputInterface
 {
     public function __construct(
         private mixed $output,
         private readonly ?CacheControl $cacheControl = null,
-        private readonly ?Expires $expires = null
-    )
-    {
+        private readonly ?Expires $expires = null,
+    ) {
     }
 
     public function getHttpCode(): int
     {
-        return 200;
+        return Response::HTTP_OK;
     }
 
     public function getHttpHeaders(): array

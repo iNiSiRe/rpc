@@ -2,7 +2,7 @@
 
 namespace inisire\RPC\Http;
 
-
+use Http\Message\Cookie;
 use inisire\RPC\Error\ErrorInterface;
 use inisire\RPC\Error\Serializer\ValidationErrorSerializer;
 use inisire\RPC\Error\ValidationError;
@@ -50,11 +50,13 @@ class HttpBridge
 
         $statusCode = Response::HTTP_OK;
         $headers = [];
+        $cookies = [];
         $output = $result->getOutput();
 
         if ($result instanceof HttpResultInterface) {
             $statusCode = $result->getHttpCode();
             $headers = $result->getHttpHeaders();
+            $cookies = $result->getHttpCookies();
         }
 
         if ($result instanceof ErrorInterface) {
@@ -74,6 +76,8 @@ class HttpBridge
         } else {
             throw new \RuntimeException(sprintf("Unsupported result output type '%s'", is_object($output) ? $output::class : gettype($output)));
         }
+
+        array_walk($cookies, $response->headers->setCookie(...));
 
         return $response;
     }

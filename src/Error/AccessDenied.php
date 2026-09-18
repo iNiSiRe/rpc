@@ -3,10 +3,10 @@
 namespace inisire\RPC\Error;
 
 use inisire\DataObject\Error\ErrorMessage;
-use inisire\RPC\Http\HttpResultInterface;
-use inisire\RPC\Result\ResultInterface;
+use inisire\RPC\Result\HttpResult;
+use Symfony\Component\HttpFoundation\Response;
 
-class AccessDenied implements ErrorInterface, ResultInterface, HttpResultInterface
+class AccessDenied extends HttpResult implements ErrorInterface
 {
     public function getCode(): string
     {
@@ -18,14 +18,9 @@ class AccessDenied implements ErrorInterface, ResultInterface, HttpResultInterfa
         return new ErrorMessage('Access denied');
     }
 
-    public function getHttpHeaders(): array
-    {
-        return [];
-    }
-
     public function getHttpCode(): int
     {
-        return 403;
+        return Response::HTTP_FORBIDDEN;
     }
 
     public function getOutput(): mixed

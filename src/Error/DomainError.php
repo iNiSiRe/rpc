@@ -3,10 +3,10 @@
 namespace inisire\RPC\Error;
 
 use inisire\DataObject\Error\ErrorMessage;
-use inisire\RPC\Http\HttpResultInterface;
-use inisire\RPC\Result\ResultInterface;
+use inisire\RPC\Result\HttpResult;
+use Symfony\Component\HttpFoundation\Response;
 
-class DomainError implements ErrorInterface, ResultInterface, HttpResultInterface
+class DomainError extends HttpResult implements ErrorInterface
 {
     private string $code;
     private ErrorMessage $message;
@@ -29,12 +29,7 @@ class DomainError implements ErrorInterface, ResultInterface, HttpResultInterfac
 
     public function getHttpCode(): int
     {
-        return 400;
-    }
-
-    public function getHttpHeaders(): array
-    {
-        return [];
+        return Response::HTTP_BAD_REQUEST;
     }
 
     public function getOutput(): mixed

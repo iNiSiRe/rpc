@@ -3,10 +3,10 @@
 namespace inisire\RPC\Error;
 
 use inisire\DataObject\Error\ErrorMessage;
-use inisire\RPC\Http\HttpResultInterface;
-use inisire\RPC\Result\ResultInterface;
+use inisire\RPC\Result\HttpResult;
+use Symfony\Component\HttpFoundation\Response;
 
-class LimitExceeded implements ErrorInterface, ResultInterface, HttpResultInterface
+class LimitExceeded extends HttpResult implements ErrorInterface
 {
     private ?int $used;
     private ?int $limit;
@@ -29,7 +29,7 @@ class LimitExceeded implements ErrorInterface, ResultInterface, HttpResultInterf
 
     public function getHttpCode(): int
     {
-        return 429;
+        return Response::HTTP_TOO_MANY_REQUESTS;
     }
 
     public function getHttpHeaders(): array

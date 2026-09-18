@@ -2,21 +2,21 @@
 
 namespace inisire\RPC\Result;
 
-use inisire\RPC\Http\HttpResultInterface;
+use inisire\RPC\Result\HttpResult;
 use Psr\Http\Message\StreamInterface;
+use Symfony\Component\HttpFoundation\Response;
 
-class FileStreamResult implements ResultInterface, HttpResultInterface
+class FileStreamResult extends HttpResult
 {
     public function __construct(
         private StreamInterface $stream,
-        private string $mimeType
-    )
-    {
+        private string $mimeType,
+    ) {
     }
 
     public function getHttpCode(): int
     {
-        return 200;
+        return Response::HTTP_OK;
     }
 
     public function getHttpHeaders(): array

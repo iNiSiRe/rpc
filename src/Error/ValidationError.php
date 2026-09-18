@@ -5,11 +5,11 @@ namespace inisire\RPC\Error;
 use inisire\DataObject\Error\Error;
 use inisire\DataObject\Error\ErrorMessage;
 use inisire\DataObject\Error\PropertyError;
-use inisire\RPC\Http\HttpResultInterface;
-use inisire\RPC\Result\ResultInterface;
+use inisire\RPC\Result\HttpResult;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 
-class ValidationError implements ErrorInterface, ResultInterface, HttpResultInterface
+class ValidationError extends HttpResult implements ErrorInterface
 {
     /**
      * @var PropertyError[]
@@ -58,14 +58,9 @@ class ValidationError implements ErrorInterface, ResultInterface, HttpResultInte
         return new self($errors);
     }
 
-    public function getHttpHeaders(): array
-    {
-        return [];
-    }
-
     public function getHttpCode(): int
     {
-        return 400;
+        return Response::HTTP_BAD_REQUEST;
     }
 
     public function getOutput(): mixed

@@ -3,15 +3,14 @@
 namespace inisire\RPC\Error;
 
 use inisire\DataObject\Error\ErrorMessage;
-use inisire\RPC\Http\HttpResultInterface;
-use inisire\RPC\Result\ResultInterface;
+use inisire\RPC\Result\HttpResult;
+use Symfony\Component\HttpFoundation\Response;
 
-class DebugServerError implements ErrorInterface, ResultInterface, HttpResultInterface
+class DebugServerError extends HttpResult implements ErrorInterface
 {
     public function __construct(
-        private \Throwable $error
-    )
-    {
+        private \Throwable $error,
+    ) {
     }
 
     public function getCode(): string
@@ -26,12 +25,7 @@ class DebugServerError implements ErrorInterface, ResultInterface, HttpResultInt
 
     public function getHttpCode(): int
     {
-        return 500;
-    }
-
-    public function getHttpHeaders(): array
-    {
-        return [];
+        return Response::HTTP_INTERNAL_SERVER_ERROR;
     }
 
     public function getOutput(): mixed

@@ -4,10 +4,10 @@ namespace inisire\RPC\Error;
 
 
 use inisire\DataObject\Error\ErrorMessage;
-use inisire\RPC\Http\HttpResultInterface;
-use inisire\RPC\Result\ResultInterface;
+use inisire\RPC\Result\HttpResult;
+use Symfony\Component\HttpFoundation\Response;
 
-class NotFound implements ErrorInterface, ResultInterface, HttpResultInterface
+class NotFound extends HttpResult implements ErrorInterface
 {
     public function getCode(): string
     {
@@ -21,12 +21,7 @@ class NotFound implements ErrorInterface, ResultInterface, HttpResultInterface
 
     public function getHttpCode(): int
     {
-        return 404;
-    }
-
-    public function getHttpHeaders(): array
-    {
-        return [];
+        return Response::HTTP_NOT_FOUND;
     }
 
     public function getOutput(): mixed

@@ -2,30 +2,23 @@
 
 namespace inisire\RPC\Result;
 
+use Symfony\Component\HttpFoundation\Response;
 
-use inisire\RPC\Http\HttpResultInterface;
-
-class Result implements ResultInterface, HttpResultInterface, MutableOutputInterface
+class Result extends HttpResult implements MutableOutputInterface
 {
     public function __construct(
         private mixed $output,
-    )
+    ) {
+    }
+
+    public function getHttpCode(): int
     {
+        return Response::HTTP_OK;
     }
 
     public function getOutput(): mixed
     {
         return $this->output;
-    }
-
-    public function getHttpCode(): int
-    {
-        return 200;
-    }
-
-    public function getHttpHeaders(): array
-    {
-        return [];
     }
 
     public function setOutput(mixed $output)
